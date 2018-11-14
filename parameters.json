@@ -24,7 +24,7 @@
             "value": "0"
         },
         "serverFarmResourceGroup": {
-            "value": "table1jrwebapp"
+            "value": "table1jrwebapprg"
         },
         "skuCode": {
             "value": "B1"
