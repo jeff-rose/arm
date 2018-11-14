@@ -1,229 +1,74 @@
 {
-    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
-    "contentVersion": "1.0.0.0",
     "parameters": {
-        "sites_table1jrwebapp_name": {
-            "defaultValue": "table1jrwebapp",
-            "type": "String"
+        "name": {
+            "type": "string"
         },
-        "serverfarms_table1jrappplan_name": {
-            "defaultValue": "table1jrappplan",
-            "type": "String"
+        "linuxFxVersion": {
+            "type": "string"
         },
-        "config_web_name": {
-            "defaultValue": "web",
-            "type": "String"
+        "hostingPlanName": {
+            "type": "string"
         },
-        "hostNameBindings_table1jrwebapp.azurewebsites.net_name": {
-            "defaultValue": "table1jrwebapp.azurewebsites.net",
-            "type": "String"
+        "hostingEnvironment": {
+            "type": "string"
+        },
+        "location": {
+            "type": "string"
+        },
+        "sku": {
+            "type": "string"
+        },
+        "skuCode": {
+            "type": "string"
+        },
+        "workerSize": {
+            "type": "string"
+        },
+        "serverFarmResourceGroup": {
+            "type": "string"
+        },
+        "subscriptionId": {
+            "type": "string"
         }
     },
-    "variables": {},
     "resources": [
         {
-            "comments": "Generalized from resource: '/subscriptions/0ab9ad2e-f316-4da5-b243-e7f65da24755/resourceGroups/table1jrwebapprg/providers/Microsoft.Web/serverfarms/table1jrappplan'.",
-            "type": "Microsoft.Web/serverfarms",
-            "sku": {
-                "name": "B1",
-                "tier": "Basic",
-                "size": "B1",
-                "family": "B",
-                "capacity": 1
-            },
-            "kind": "linux",
-            "name": "[parameters('serverfarms_table1jrappplan_name')]",
-            "apiVersion": "2016-09-01",
-            "location": "West US",
-            "scale": null,
-            "properties": {
-                "name": "[parameters('serverfarms_table1jrappplan_name')]",
-                "workerTierName": null,
-                "adminSiteName": null,
-                "hostingEnvironmentProfile": null,
-                "perSiteScaling": false,
-                "reserved": true,
-                "targetWorkerCount": 0,
-                "targetWorkerSizeId": 0
-            },
-            "dependsOn": []
-        },
-        {
-            "comments": "Generalized from resource: '/subscriptions/0ab9ad2e-f316-4da5-b243-e7f65da24755/resourceGroups/table1jrwebapprg/providers/Microsoft.Web/sites/table1jrwebapp'.",
+            "apiVersion": "2016-03-01",
+            "name": "[parameters('name')]",
             "type": "Microsoft.Web/sites",
-            "kind": "app,linux",
-            "name": "[parameters('sites_table1jrwebapp_name')]",
-            "apiVersion": "2016-08-01",
-            "location": "West US",
-            "scale": null,
             "properties": {
-                "enabled": true,
-                "hostNameSslStates": [
-                    {
-                        "name": "[concat(parameters('sites_table1jrwebapp_name'),'.azurewebsites.net')]",
-                        "sslState": "Disabled",
-                        "virtualIP": null,
-                        "thumbprint": null,
-                        "toUpdate": null,
-                        "hostType": "Standard"
-                    },
-                    {
-                        "name": "[concat(parameters('sites_table1jrwebapp_name'),'.scm.azurewebsites.net')]",
-                        "sslState": "Disabled",
-                        "virtualIP": null,
-                        "thumbprint": null,
-                        "toUpdate": null,
-                        "hostType": "Repository"
-                    }
-                ],
-                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('serverfarms_table1jrappplan_name'))]",
+                "name": "[parameters('name')]",
+                "siteConfig": {
+                    "appSettings": [],
+                    "linuxFxVersion": "[parameters('linuxFxVersion')]"
+                },
+                "serverFarmId": "[concat('/subscriptions/', parameters('subscriptionId'),'/resourcegroups/', parameters('serverFarmResourceGroup'), '/providers/Microsoft.Web/serverfarms/', parameters('hostingPlanName'))]",
+                "hostingEnvironment": "[parameters('hostingEnvironment')]"
+            },
+            "location": "[parameters('location')]",
+            "dependsOn": [
+                "[concat('Microsoft.Web/serverfarms/', parameters('hostingPlanName'))]"
+            ]
+        },
+        {
+            "apiVersion": "2016-09-01",
+            "name": "[parameters('hostingPlanName')]",
+            "type": "Microsoft.Web/serverfarms",
+            "location": "[parameters('location')]",
+            "properties": {
+                "name": "[parameters('hostingPlanName')]",
+                "workerSizeId": "[parameters('workerSize')]",
                 "reserved": true,
-                "siteConfig": null,
-                "scmSiteAlsoStopped": false,
-                "hostingEnvironmentProfile": null,
-                "clientAffinityEnabled": true,
-                "clientCertEnabled": false,
-                "hostNamesDisabled": false,
-                "containerSize": 0,
-                "dailyMemoryTimeQuota": 0,
-                "cloningInfo": null,
-                "httpsOnly": false
+                "numberOfWorkers": "1",
+                "hostingEnvironment": "[parameters('hostingEnvironment')]"
             },
-            "dependsOn": [
-                "[resourceId('Microsoft.Web/serverfarms', parameters('serverfarms_table1jrappplan_name'))]"
-            ]
-        },
-        {
-            "comments": "Generalized from resource: '/subscriptions/0ab9ad2e-f316-4da5-b243-e7f65da24755/resourceGroups/table1jrwebapprg/providers/Microsoft.Web/sites/table1jrwebapp/config/web'.",
-            "type": "Microsoft.Web/sites/config",
-            "name": "[concat(parameters('sites_table1jrwebapp_name'), '/', parameters('config_web_name'))]",
-            "apiVersion": "2016-08-01",
-            "location": "West US",
-            "scale": null,
-            "properties": {
-                "numberOfWorkers": 1,
-                "defaultDocuments": [
-                    "Default.htm",
-                    "Default.html",
-                    "Default.asp",
-                    "index.htm",
-                    "index.html",
-                    "iisstart.htm",
-                    "default.aspx",
-                    "index.php",
-                    "hostingstart.html"
-                ],
-                "netFrameworkVersion": "v4.0",
-                "phpVersion": "",
-                "pythonVersion": "",
-                "nodeVersion": "",
-                "linuxFxVersion": "TOMCAT|8.5-jre8",
-                "windowsFxVersion": null,
-                "requestTracingEnabled": false,
-                "remoteDebuggingEnabled": false,
-                "remoteDebuggingVersion": null,
-                "httpLoggingEnabled": false,
-                "logsDirectorySizeLimit": 35,
-                "detailedErrorLoggingEnabled": false,
-                "publishingUsername": "[concat('$table1jr', parameters('config_web_name'),'app')]",
-                "publishingPassword": null,
-                "appSettings": null,
-                "azureStorageAccounts": {},
-                "metadata": null,
-                "connectionStrings": null,
-                "machineKey": null,
-                "handlerMappings": null,
-                "documentRoot": null,
-                "scmType": "LocalGit",
-                "use32BitWorkerProcess": true,
-                "webSocketsEnabled": false,
-                "alwaysOn": false,
-                "javaVersion": null,
-                "javaContainer": null,
-                "javaContainerVersion": null,
-                "appCommandLine": "",
-                "managedPipelineMode": "Integrated",
-                "virtualApplications": [
-                    {
-                        "virtualPath": "/",
-                        "physicalPath": "site\\wwwroot",
-                        "preloadEnabled": false,
-                        "virtualDirectories": null
-                    }
-                ],
-                "winAuthAdminState": 0,
-                "winAuthTenantState": 0,
-                "customAppPoolIdentityAdminState": false,
-                "customAppPoolIdentityTenantState": false,
-                "runtimeADUser": null,
-                "runtimeADUserPassword": null,
-                "loadBalancing": "LeastRequests",
-                "routingRules": [],
-                "experiments": {
-                    "rampUpRules": []
-                },
-                "limits": null,
-                "autoHealEnabled": false,
-                "autoHealRules": null,
-                "tracingOptions": null,
-                "vnetName": "",
-                "siteAuthEnabled": false,
-                "siteAuthSettings": {
-                    "enabled": null,
-                    "unauthenticatedClientAction": null,
-                    "tokenStoreEnabled": null,
-                    "allowedExternalRedirectUrls": null,
-                    "defaultProvider": null,
-                    "clientId": null,
-                    "clientSecret": null,
-                    "issuer": null,
-                    "allowedAudiences": null,
-                    "additionalLoginParams": null,
-                    "isAadAutoProvisioned": false,
-                    "googleClientId": null,
-                    "googleClientSecret": null,
-                    "googleOAuthScopes": null,
-                    "facebookAppId": null,
-                    "facebookAppSecret": null,
-                    "facebookOAuthScopes": null,
-                    "twitterConsumerKey": null,
-                    "twitterConsumerSecret": null,
-                    "microsoftAccountClientId": null,
-                    "microsoftAccountClientSecret": null,
-                    "microsoftAccountOAuthScopes": null
-                },
-                "cors": null,
-                "push": null,
-                "apiDefinition": null,
-                "autoSwapSlotName": null,
-                "localMySqlEnabled": false,
-                "managedServiceIdentityId": null,
-                "xManagedServiceIdentityId": null,
-                "ipSecurityRestrictions": null,
-                "http20Enabled": false,
-                "minTlsVersion": "1.2",
-                "ftpsState": "AllAllowed",
-                "reservedInstanceCount": 0
+            "sku": {
+                "Tier": "[parameters('sku')]",
+                "Name": "[parameters('skuCode')]"
             },
-            "dependsOn": [
-                "[resourceId('Microsoft.Web/sites', parameters('sites_table1jrwebapp_name'))]"
-            ]
-        },
-        {
-            "comments": "Generalized from resource: '/subscriptions/0ab9ad2e-f316-4da5-b243-e7f65da24755/resourceGroups/table1jrwebapprg/providers/Microsoft.Web/sites/table1jrwebapp/hostNameBindings/table1jrwebapp.azurewebsites.net'.",
-            "type": "Microsoft.Web/sites/hostNameBindings",
-            "name": "[concat(parameters('sites_table1jrwebapp_name'), '/', parameters('hostNameBindings_table1jrwebapp.azurewebsites.net_name'))]",
-            "apiVersion": "2016-08-01",
-            "location": "West US",
-            "scale": null,
-            "properties": {
-                "siteName": "table1jrwebapp",
-                "domainId": null,
-                "hostNameType": "Verified"
-            },
-            "dependsOn": [
-                "[resourceId('Microsoft.Web/sites', parameters('sites_table1jrwebapp_name'))]"
-            ]
+            "kind": "linux"
         }
-    ]
+    ],
+    "$schema": "http://schema.management.azure.com/schemas/2014-04-01-preview/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0"
 }
